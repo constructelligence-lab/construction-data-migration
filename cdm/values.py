@@ -94,3 +94,11 @@ def parse_int(text: str) -> int | None:
 
 def format_money(value: Decimal) -> str:
     return f"{value:,.2f}"
+
+
+_NAME_NOISE = re.compile(r"\b(inc|llc|ltd|limited|co|corp|corporation|company|the|and)\b|[^a-z0-9]")
+
+
+def name_key(name: str) -> str:
+    """Normalise a business name so 'Sample Drywall Co.' and 'SAMPLE DRYWALL, INC' compare equal."""
+    return _NAME_NOISE.sub("", name.lower().replace("&", " and "))

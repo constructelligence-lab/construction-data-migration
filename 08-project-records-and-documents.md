@@ -78,6 +78,18 @@ Documents are reconciled by count rather than by value. For each project and rec
 Any difference is a record left behind or duplicated. Chase it the same way as a financial difference: fix the
 export, not the loaded result.
 
+For the files themselves, take a manifest when they leave the old system and compare it with the archive or
+upload folder after every copy:
+
+```bash
+python3 -m cdm manifest exports/documents --out out/documents-at-export.csv
+python3 -m cdm manifest-compare out/documents-at-export.csv archive/documents
+```
+
+The comparison lists every file that is missing, added or changed in content (by SHA-256 hash), and every file that
+moved folder. A file that is "the same PDF" but has a different hash has been re-saved. Find out by what, because
+re-saving can strip signatures, markups and metadata.
+
 ---
 
 *Part of [Construction data migration](README.md) · Maintained by [Constructelligence](https://constructelligence.co) ·

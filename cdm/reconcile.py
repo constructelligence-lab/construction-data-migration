@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from .schema import Issue, Table, read_folder
+from .values import name_key
 
 ZERO = Decimal("0.00")
 
@@ -42,6 +43,17 @@ CHECKS = {
     "R10": ("error", "A commitment change order has no commitment, or its commitment is on another job"),
     "R11": ("info", "Pending change orders exist: they are not in contract value, so check they migrated as pending"),
     "R12": ("error", "More retainage has been released to a vendor than was withheld from it"),
+    "R13": ("warning", "Two cost lines match on job, code, type, date, amount and vendor under different references"),
+    "R14": ("error", "A cost line is invoiced against a commitment by a different vendor than the commitment's"),
+    "R15": ("warning", "An AP cost line has no vendor"),
+    "R16": ("warning", "Pay application numbers on a job have a gap or do not start at 1"),
+    "R17": ("warning", "A job is billed beyond its contract value"),
+    "R18": ("warning", "A closed commitment still has retainage withheld"),
+    "R19": ("warning", "An inactive vendor holds an open commitment"),
+    "R20": ("warning", "Two vendor records look like the same business"),
+    "R21": ("warning", "An approved change order is attached to a void commitment"),
+    "R22": ("warning", "A closed job still has pending change orders"),
+    "R23": ("warning", "Cost is posted to a cost code marked inactive"),
     "T01": ("error", "A recomputed figure does not equal the old system's control total"),
     "T02": ("error", "A job is in the control totals but not in the migration, or an open job has no control totals"),
     "T03": ("error", "The control totals are incomplete or carry more than one cutover date"),
@@ -285,6 +297,138 @@ def _integrity(tables: dict[str, Table], as_of: dt.date | None, issues: list[Iss
         )
 
 
+def _consistency(tables: dict[str, Table], metrics: dict[str, dict[str, Decimal]], issues: list[Issue]) -> None:
+    """Checks that each record is plausible against the others. These are the faults that tie out
+    arithmetically but will still hurt someone after cutover."""
+    jobs = {r["job_id"]: r for r in tables["jobs"].rows if r["job_id"]}
+    vendors = {r["vendor_id"]: r for r in tables["vendors"].rows if r["vendor_id"]}
+    commitments = {r["commitment_id"]: r for r in tables["commitments"].rows if r["commitment_id"]}
+    inactive_codes = {r["cost_code"] for r in tables["cost_codes"].rows if r["active"] is False}
+
+    seen: dict[tuple, tuple[int, str]] = {}
+    inactive_hits: dict[tuple[str, str], int] = {}
+    for line, r in _rows(tables["cost_transactions"]):
+        job = r["job_id"] or ""
+        signature = (r["job_id"], r["cost_code"], r["cost_type"], r["posted_date"], r["amount"], r["vendor_id"], r["commitment_id"])
+        if r["amount"] and all(v is not None for v in signature[:5]):
+            if signature in seen:
+                first_line, first_id = seen[signature]
+                issues.append(
+                    Issue(
+                        "R13",
+                        "warning",
+                        f"{r['transaction_id']} matches {first_id} (line {first_line}) on job, code, type, date, amount and vendor: a re-run export, or two genuine charges",
+                        "cost_transactions",
+                        line,
+                        job,
+                    )
+                )
+            else:
+                seen[signature] = (line, r["transaction_id"] or "?")
+        parent = commitments.get(r["commitment_id"] or "")
+        if parent and r["vendor_id"] and parent["vendor_id"] and r["vendor_id"] != parent["vendor_id"]:
+            issues.append(
+                Issue(
+                    "R14",
+                    "error",
+                    f"{r['transaction_id']} is invoiced by {r['vendor_id']} against {parent['commitment_id']}, which belongs to {parent['vendor_id']}",
+                    "cost_transactions",
+                    line,
+                    job,
+                )
+            )
+        if r["source"] == "ap" and not r["vendor_id"]:
+            issues.append(Issue("R15", "warning", f"{r['transaction_id']} is an AP line with no vendor", "cost_transactions", line, job))
+        if r["cost_code"] in inactive_codes and (job, r["cost_code"]) not in inactive_hits:
+            inactive_hits[(job, r["cost_code"])] = line
+    for (job, code), line in sorted(inactive_hits.items()):
+        issues.append(Issue("R23", "warning", f"cost posted to inactive cost code {code}", "cost_transactions", line, job))
+
+    apps: dict[str, list[int]] = defaultdict(list)
+    for r in tables["billings"].rows:
+        if r["job_id"] and r["application_number"] is not None:
+            apps[r["job_id"]].append(r["application_number"])
+    for job, numbers in sorted(apps.items()):
+        ordered = sorted(set(numbers))
+        expected = list(range(1, len(ordered) + 1))
+        if ordered != expected:
+            missing = sorted(set(range(1, max(ordered) + 1)) - set(ordered))
+            detail = f"missing {', '.join(map(str, missing))}" if missing else f"starts at {ordered[0]}"
+            issues.append(
+                Issue(
+                    "R16",
+                    "warning",
+                    f"pay application numbers {detail}; owners track applications by number, so confirm the gap is real",
+                    "billings",
+                    0,
+                    job,
+                )
+            )
+
+    for job, m in sorted(metrics.items()):
+        if job in jobs and m["billed_to_date"] > m["contract_value"]:
+            issues.append(
+                Issue(
+                    "R17",
+                    "warning",
+                    f"billed {m['billed_to_date']:,.2f} against a contract value of {m['contract_value']:,.2f}: an unapproved change billed, or a change order missing",
+                    "billings",
+                    0,
+                    job,
+                )
+            )
+
+    withheld: dict[str, Decimal] = defaultdict(lambda: ZERO)
+    for r in tables["cost_transactions"].rows:
+        if r["commitment_id"]:
+            withheld[r["commitment_id"]] += r["retainage_withheld"] or ZERO
+    for line, r in _rows(tables["commitments"]):
+        cid = r["commitment_id"] or ""
+        if r["status"] == "closed" and withheld.get(cid, ZERO) > ZERO:
+            issues.append(
+                Issue(
+                    "R18",
+                    "warning",
+                    f"commitment {cid} is closed with {withheld[cid]:,.2f} retainage still withheld: someone is still owed it",
+                    "commitments",
+                    line,
+                    r["job_id"] or "",
+                )
+            )
+        vendor = vendors.get(r["vendor_id"] or "")
+        if vendor and vendor["status"] == "inactive" and r["status"] == "open":
+            issues.append(
+                Issue("R19", "warning", f"vendor {vendor['vendor_id']} is inactive but holds open commitment {cid}", "commitments", line, r["job_id"] or "")
+            )
+
+    by_name: dict[str, list[str]] = defaultdict(list)
+    for r in tables["vendors"].rows:
+        if r["vendor_id"] and r["vendor_name"]:
+            by_name[name_key(r["vendor_name"])].append(r["vendor_id"])
+    for key, ids in sorted(by_name.items()):
+        if key and len(ids) > 1:
+            issues.append(
+                Issue(
+                    "R20",
+                    "warning",
+                    f"vendors {', '.join(ids)} look like the same business; merge them before cutover or history splits between them",
+                    "vendors",
+                )
+            )
+
+    for line, r in _rows(tables["change_orders"]):
+        parent = commitments.get(r["commitment_id"] or "")
+        if parent and parent["status"] == "void" and r["status"] == "approved":
+            issues.append(
+                Issue("R21", "warning", f"{r['change_order_id']} is approved on void commitment {parent['commitment_id']}", "change_orders", line, r["job_id"] or "")
+            )
+        job = jobs.get(r["job_id"] or "")
+        if job and job["status"] == "closed" and r["status"] == "pending":
+            issues.append(
+                Issue("R22", "warning", f"{r['change_order_id']} is still pending on a closed job", "change_orders", line, r["job_id"])
+            )
+
+
 def reconcile(folder: Path) -> Result:
     tables, issues = read_folder(folder)
     for record in ("jobs", "control_totals"):
@@ -301,6 +445,7 @@ def reconcile(folder: Path) -> Result:
 
     _integrity(tables, as_of, issues)
     metrics = compute_metrics(tables, as_of)
+    _consistency(tables, metrics, issues)
     jobs = {r["job_id"]: r for r in tables["jobs"].rows if r["job_id"]}
 
     result = Result(folder, as_of, issues, [], jobs)

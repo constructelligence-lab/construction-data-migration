@@ -22,14 +22,18 @@ dozen open jobs. Adjust the timing to your size. Keep the order. A printable ver
 - [ ] Write a [field mapping](templates/field-mapping.csv) for every record, naming the source report and column
 - [ ] Clean the source data where the mapping exposes problems: duplicate vendors, dead codes, jobs never closed
 - [ ] Tie job cost to the GL in the old system and clear any existing differences
-- [ ] Set up a secure staging area for exports ([chapter 10](10-handling-migration-data-safely.md))
+- [ ] Profile every export (`cdm profile`) and clear the errors at source ([chapter 4](04-source-data-quality.md))
+- [ ] Work through the [source data clean-up list](04-source-data-quality.md#the-clean-up-list)
+- [ ] Inventory every [integration and report](10-integrations-and-reports.md); decide rebuild, replace or retire
+- [ ] Set up a secure staging area for exports ([chapter 13](13-handling-migration-data-safely.md))
 
 ## T minus 7 to 5 weeks: trial load 1
 
 - [ ] Export as of the last closed period, using the final reports and mappings
 - [ ] Map, validate (`cdm validate`), load into a test copy of the new system
 - [ ] Reconcile to the cent against that period's control reports (`cdm reconcile`)
-- [ ] Check document counts and the schedule conversion
+- [ ] Check document counts, file manifests (`cdm manifest-compare`) and the schedule conversion
+- [ ] Test every rebuilt integration with trial files
 - [ ] Log every issue; fix each one in the mapping or the source data
 
 ## T minus 5 to 3 weeks: trial load 2 and training
@@ -67,6 +71,7 @@ dozen open jobs. Adjust the timing to your size. Keep the order. A printable ver
       committed cost, billed to date, retainage, and over/under billing on the WIP schedule
 - [ ] Explain every difference; sign off again
 - [ ] Produce the first pay application from the new system, continuing the numbering
+- [ ] Run the rebuilt reports in both systems and get each one signed off by its user
 
 ## T plus 6 weeks and on: close it out
 
@@ -74,7 +79,7 @@ dozen open jobs. Adjust the timing to your size. Keep the order. A printable ver
 - [ ] Delete staging copies of the exports, and record that you did
 - [ ] Archive the old system's reports and raw data if it will be switched off, with an index
 - [ ] Hand the mappings, crosswalk, sign-offs and issue log to whoever will own the new system
-- [ ] Review after the first quarter: what the new system reports that it did not before, and what it stopped reporting
+- [ ] Hold the [day 90 review](12-after-go-live.md#day-90-review)
 
 ---
 

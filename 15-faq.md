@@ -25,18 +25,23 @@ AI tools are useful for drafting: suggesting a crosswalk from two code lists, dr
 column headers, or explaining an unfamiliar export. They should not compute your control totals or decide
 whether a difference matters. The reconciliation is the control, and it has to be arithmetic, not judgement.
 Keep sensitive exports out of any tool whose terms let it keep what you give it
-([chapter 10](10-handling-migration-data-safely.md)).
+([chapter 13](13-handling-migration-data-safely.md)).
+
+If you use an AI coding agent in this repository, it reads [`AGENTS.md`](AGENTS.md): the rules it follows (never
+invent a control total, never edit loaded data to force a tie-out, never guess a date format, never handle full tax
+IDs) and the workflow it runs. The agent does the legwork; the controller, the PM lead and the data owner still
+make the calls and sign.
 
 ### Our totals are off by a few cents. Can we just book an adjustment?
 
 Not until you know why. Small differences are often two large errors cancelling each other out
-([why to the cent](06-reconciliation.md#why-to-the-cent)). If the cause turns out to be a genuine rounding policy
+([why to the cent](07-reconciliation.md#why-to-the-cent)). If the cause turns out to be a genuine rounding policy
 difference between the systems, that is the controller's decision to make and document, not a mapping fix.
 
 ### We are mid-year. Can we still cut over?
 
 Yes, with a plan for year-to-date payroll and vendor tax reporting, agreed with your payroll provider and
-accountant ([chapter 5](05-financial-cutover.md#payroll-and-tax-reporting)). A quarter start is often easier
+accountant ([chapter 6](06-financial-cutover.md#payroll-and-tax-reporting)). A quarter start is often easier
 than a random month end.
 
 ### We run everything in spreadsheets. Is this for us?
@@ -61,7 +66,7 @@ offers a documented public API, that is usually a better route than report expor
 
 ### Is this legal, tax or accounting advice?
 
-No. It is general guidance on process and data. The questions in chapters 5, 7 and 10 are the ones to take to
+No. It is general guidance on process and data. The questions in chapters 6, 8 and 13 are the ones to take to
 your accountant, payroll provider and counsel, who know your jurisdiction, your contracts and your books.
 
 ### Can you help with our migration?

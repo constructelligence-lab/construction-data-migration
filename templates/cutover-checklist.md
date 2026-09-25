@@ -3,7 +3,7 @@
 Job list and dates: ____________________  Cutover date (T): ____________  Data owner: ____________________
 
 Print this, tick it, sign it, file it with the reconciliation sign-off. The reasoning behind each line is in the
-[cutover runbook](../09-cutover-runbook.md).
+[cutover runbook](../11-cutover-runbook.md).
 
 ## Before T
 

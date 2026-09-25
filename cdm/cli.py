@@ -1,11 +1,14 @@
 """Command line: ``python3 -m cdm <command>``.
 
 Commands
+  profile FILE                    inspect a raw export for problems before writing a mapping
   validate DIR                    check record files against the neutral schema
   reconcile DIR                   tie migrated records out to the old system's control totals
   map MAPPING INPUT --out FILE    turn an old system's CSV export into a neutral record file
   schedule FILE --out DIR         read a P6 XER or Project XML file into neutral CSV
   schedule-compare SOURCE TARGET  check a schedule survived a conversion
+  manifest DIR --out FILE         list every file with its size and SHA-256 hash
+  manifest-compare BEFORE AFTER   prove a document export or archive arrived complete and unaltered
 """
 
 from __future__ import annotations
@@ -14,12 +17,44 @@ import argparse
 import sys
 from pathlib import Path
 
-from . import __version__, mapping, report
+from . import __version__, manifest, mapping, report
+from .profile import profile_file
+from .profile import text_report as profile_report
 from .reconcile import reconcile
 from .schedule import read_schedule
 from .schedule.compare import compare
 from .schedule.mspdi import read_mspdi
 from .schema import read_folder
+
+
+def _profile(args) -> int:
+    p = profile_file(args.file, delimiter=args.delimiter, encoding=args.encoding)
+    sys.stdout.write(profile_report(p))
+    return 1 if p.errors else 0
+
+
+def _manifest(args) -> int:
+    entries = manifest.build(args.folder)
+    manifest.write(entries, args.out)
+    print(f"{manifest.summarise(entries)}\nwritten to {args.out}")
+    return 0
+
+
+def _manifest_compare(args) -> int:
+    d = manifest.compare(manifest.load(args.before), manifest.load(args.after))
+    for line in d.summary:
+        print(line)
+    for p in d.missing:
+        print(f"MISSING  {p}")
+    for p in d.changed:
+        print(f"CHANGED  {p}  (same name, different content)")
+    for p in d.added:
+        print(f"ADDED    {p}")
+    for a, b in d.moved:
+        print(f"MOVED    {a} -> {b}")
+    print(f"\n{'PASS: every file arrived unaltered' if d.passed else 'FAIL'}  "
+          f"({len(d.missing)} missing, {len(d.changed)} changed, {len(d.added)} added, {len(d.moved)} moved)")
+    return 0 if d.passed else 1
 
 
 def _validate(args) -> int:
@@ -103,6 +138,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--version", action="version", version=f"cdm {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    p = sub.add_parser("profile", help="inspect a raw export before writing a mapping")
+    p.add_argument("file")
+    p.add_argument("--delimiter", default=",")
+    p.add_argument("--encoding", help="force an encoding instead of detecting UTF-8 or Windows-1252")
+    p.set_defaults(run=_profile)
+
     p = sub.add_parser("validate", help="check record files against the neutral schema")
     p.add_argument("folder")
     p.set_defaults(run=_validate)
@@ -133,6 +174,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--id-source", default="uid", choices=["uid", "id", "wbs", "name"], help="Project XML only: what identifies a task")
     p.add_argument("--date-tolerance-hours", type=float, default=0.0)
     p.set_defaults(run=_schedule_compare)
+
+    p = sub.add_parser("manifest", help="list every file under a folder with size and SHA-256")
+    p.add_argument("folder")
+    p.add_argument("--out", required=True)
+    p.set_defaults(run=_manifest)
+
+    p = sub.add_parser("manifest-compare", help="compare two manifests, or two folders")
+    p.add_argument("before", help="manifest CSV or folder")
+    p.add_argument("after", help="manifest CSV or folder")
+    p.set_defaults(run=_manifest_compare)
 
     args = parser.parse_args(argv)
     try:

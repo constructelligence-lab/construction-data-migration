@@ -1,0 +1,8 @@
+report,used_by,decision_it_supports,frequency,old_system_report,new_system_equivalent,definitions_checked,figures_agree_in_parallel_run,signed_off_by,notes
+WIP schedule,Controller,Revenue recognition and over/under billing,monthly,,,,,,
+Cost to complete,PM,Forecast final cost and margin,monthly,,,,,,
+Commitment status,PM,What is left to pay each subcontractor,weekly,,,,,,
+Retainage receivable,Controller,Collections and closeout,monthly,,,,,,
+Retainage payable,Controller,Releases to subcontractors,monthly,,,,,,
+Aged payables,Controller,Payment runs,weekly,,,,,,
+Change order log,PM,Exposure and approvals,weekly,,,,,,

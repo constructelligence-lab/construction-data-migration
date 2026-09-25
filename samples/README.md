@@ -7,8 +7,8 @@ the script does. Names such as "Sample Drywall Co" are placeholders and do not r
 | Folder | What it is |
 | --- | --- |
 | [`clean/`](clean/) | A complete migration of three jobs in the neutral model, with control totals. It ties out to the cent |
-| [`broken/`](broken/) | The same migration with nine realistic faults planted in it |
-| [`legacy-export/`](legacy-export/) | One job's cost detail as a typical old-system report export, plus the cost code crosswalk |
+| [`broken/`](broken/) | The same migration with twelve realistic faults planted in it |
+| [`legacy-export/`](legacy-export/) | One job's cost detail as a typical old-system report export, the cost code crosswalk, and a vendor list with most of the problems an export can have |
 | [`schedules/`](schedules/) | One fit-out schedule as P6 XER, as Microsoft Project XML, and as a conversion that lost logic |
 
 ## The jobs
@@ -34,6 +34,22 @@ Run `python3 -m cdm reconcile samples/broken` to see each one caught.
 | 7 | A commitment change order attached to the right number on the wrong job | `R10` |
 | 8 | A credit note dropped by a filter that kept positive amounts only | `T01` cost to date and retainage payable on J-1107 |
 | 9 | The same purchase order loaded twice | `R01` and `T01` committed cost on J-1107 |
+| 10 | An AP invoice keyed to the wrong vendor against the right subcontract | `R14` |
+| 11 | Pay applications renumbered from 3 onwards, leaving a gap | `R16` |
+| 12 | The same subcontractor set up twice under two vendor numbers | `R20` |
+
+Fault 1 is also flagged by `R13`, which spots lines that match on everything but their reference.
+
+## Try the profiler
+
+```bash
+python3 -m cdm profile samples/legacy-export/vendor-list.csv
+```
+
+The vendor list is saved in Windows-1252, carries full (invalid, placeholder) tax IDs, has been through a
+spreadsheet (scientific notation, lost leading zeros), has ambiguous dates, a duplicated row and the same vendor
+spelt two ways. The profiler finds all of it. The job cost export, by contrast, profiles clean apart from its
+subtotal rows.
 
 ## Try the mapping
 

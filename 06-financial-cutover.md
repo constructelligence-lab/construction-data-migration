@@ -115,7 +115,7 @@ error or a pre-existing one, and you will not be able to tell which.
    `control_totals`.
 5. Tie job cost to the GL.
 6. Export, map, load.
-7. Reconcile to the cent ([chapter 6](06-reconciliation.md)) and sign off.
+7. Reconcile to the cent ([chapter 7](07-reconciliation.md)) and sign off.
 8. Open the new system for entries.
 
 ---

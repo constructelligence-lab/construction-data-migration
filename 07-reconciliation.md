@@ -57,12 +57,15 @@ INFO    R11 [J-1104] 2 pending change order(s) worth 51,500.00; confirm they are
 PASS: every control total ties out  (0 errors, 0 warnings, 2 notes)
 ```
 
+The same checks apply after go-live: re-run the reconciliation at each month-end for the first quarter, with that
+month's control totals ([chapter 12](12-after-go-live.md#the-first-month-end)).
+
 The command exits non-zero on any error, so it can gate a load script. `--markdown` writes a sign-off
 document with the tie-out table per job, every finding, and signature lines. `--json` writes the same result
 for other tools.
 
 Run it against [`samples/broken`](samples/README.md#the-planted-faults) to see what a failing migration looks
-like. Nine realistic faults are planted there, and every one is caught.
+like. Twelve realistic faults are planted there, and every one is caught.
 
 ## The checks
 
@@ -82,6 +85,17 @@ Errors block sign-off. Warnings need a person to look and decide. Notes are remi
 | `R10` | error | A commitment change order has no commitment, or its commitment is on another job | A change order number that exists on two jobs in the old system |
 | `R11` | note | Pending change orders exist | Not a problem in itself. Confirm they arrived as pending, not approved and not dropped |
 | `R12` | error | More retainage has been released to a vendor than was withheld | A release loaded twice, or the withholding lines lost |
+| `R13` | warning | Two cost lines match on job, code, type, date, amount and vendor under different references | A re-run export appended to the first. Only the tie-out and this check see it, because the keys differ |
+| `R14` | error | A cost line is invoiced against a commitment by a different vendor | A vendor number keyed wrongly, or two vendors merged in one system and not the other |
+| `R15` | warning | An AP cost line has no vendor | The vendor column dropped from the export or the mapping |
+| `R16` | warning | Pay application numbers have a gap or do not start at 1 | Applications renumbered, or one left out of the export. Owners track by number |
+| `R17` | warning | A job is billed beyond its contract value | An unapproved change billed, or an approved change order missing |
+| `R18` | warning | A closed commitment still has retainage withheld | A subcontract closed before its retainage was released. Someone is still owed it |
+| `R19` | warning | An inactive vendor holds an open commitment | The vendor marked inactive in clean-up without checking commitments |
+| `R20` | warning | Two vendor records look like the same business | A vendor set up twice. Merge before cutover, or history splits between them |
+| `R21` | warning | An approved change order sits on a void commitment | The change should move to the replacement commitment |
+| `R22` | warning | A closed job still has pending change orders | Exposure nobody is chasing |
+| `R23` | warning | Cost is posted to a cost code marked inactive | A code deactivated in the new list while still in use, or a crosswalk row pointing at an old code |
 | `T01` | error | A recomputed figure does not equal the old system's control total | See [chasing a difference](#chasing-a-difference) |
 | `T02` | error | A job has control totals but is not in the migration, or an open job has no control totals | A job left out of the export, or out of the controls |
 | `T03` | error | The control totals are missing, incomplete, or carry more than one cutover date | Controls pulled from reports run on different days |
@@ -109,8 +123,8 @@ correct the loaded data by hand, because the next trial load will not include th
 The same principle applies to everything else that moves:
 
 - **Documents:** counts per project and type (RFIs, submittals, drawings, change events), open versus closed,
-  and attachment counts. See [chapter 7](07-project-records-and-documents.md#reconciling-documents).
-- **Schedules:** activities, relationships, dates and data date. See [chapter 8](08-schedules.md).
+  and attachment counts. See [chapter 8](08-project-records-and-documents.md#reconciling-documents).
+- **Schedules:** activities, relationships, dates and data date. See [chapter 9](09-schedules.md).
 - **Vendors:** every vendor with an open commitment, open retainage or year-to-date reportable payments is
   present and active.
 

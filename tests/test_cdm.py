@@ -17,6 +17,9 @@ sys.path.insert(0, str(ROOT))
 
 from cdm import values  # noqa: E402
 from cdm.mapping import run_mapping  # noqa: E402
+from cdm import manifest  # noqa: E402
+from cdm.profile import CHECKS as PROFILE_CHECKS  # noqa: E402
+from cdm.profile import profile_file  # noqa: E402
 from cdm.reconcile import CHECKS, reconcile  # noqa: E402
 from cdm.schedule import read_mspdi, read_xer  # noqa: E402
 from cdm.schedule.compare import compare  # noqa: E402
@@ -61,9 +64,13 @@ class Values(unittest.TestCase):
 
 class Schema(unittest.TestCase):
     def test_every_check_is_documented(self):
-        text = (ROOT / "06-reconciliation.md").read_text(encoding="utf-8")
+        chapter = (ROOT / "07-reconciliation.md").read_text(encoding="utf-8")
+        catalogue = (ROOT / "CHECKS.md").read_text(encoding="utf-8")
         for check in CHECKS:
-            self.assertIn(f"`{check}`", text, f"{check} is not explained in chapter 6")
+            self.assertIn(f"`{check}`", chapter, f"{check} is not explained in chapter 7")
+            self.assertIn(f"`{check}`", catalogue, f"{check} is not in CHECKS.md")
+        for check in PROFILE_CHECKS:
+            self.assertIn(f"`{check}`", catalogue, f"{check} is not in CHECKS.md")
 
     def test_sample_headers_match_schema(self):
         schema = load_schema()
@@ -84,7 +91,9 @@ class Reconcile(unittest.TestCase):
     def test_broken_sample_catches_every_planted_fault(self):
         result = reconcile(SAMPLES / "broken")
         self.assertFalse(result.passed)
-        self.assertEqual(result.checks_failed(), {"R01", "R03", "R05", "R06", "R09", "R10", "T01"})
+        self.assertEqual(result.checks_failed(), {"R01", "R03", "R05", "R06", "R09", "R10", "R14", "T01"})
+        warnings = {i.check for i in result.issues if i.severity == "warning"}
+        self.assertEqual(warnings, {"R13", "R16", "R20"})
         failed = {(t.job_id, t.metric) for t in result.tie_outs if not t.ties}
         self.assertEqual(
             failed,
@@ -103,7 +112,8 @@ class Reconcile(unittest.TestCase):
             folder = Path(tmp) / "data"
             shutil.copytree(SAMPLES / "clean", folder)
             path = folder / "cost_transactions.csv"
-            rows = list(csv.DictReader(path.open(newline="", encoding="utf-8")))
+            with path.open(newline="", encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
             rows[0]["amount"] = str(Decimal(rows[0]["amount"]) + Decimal("0.01"))
             with path.open("w", newline="", encoding="utf-8") as handle:
                 writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
@@ -123,6 +133,115 @@ class Reconcile(unittest.TestCase):
             self.assertIn("T02", result.checks_failed())
 
 
+def _edit(folder: Path, record: str, change) -> None:
+    """Apply ``change(rows)`` to one record file in place."""
+    path = folder / f"{record}.csv"
+    with path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    fields = list(rows[0])
+    change(rows)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+class ConsistencyChecks(unittest.TestCase):
+    """Each consistency check fires on a minimal change to the clean sample."""
+
+    def run_with(self, record, change):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp) / "data"
+            shutil.copytree(SAMPLES / "clean", folder)
+            _edit(folder, record, change)
+            result = reconcile(folder)
+            return {i.check for i in result.issues if i.severity != "info"}
+
+    def test_r15_ap_line_without_vendor(self):
+        def change(rows):
+            next(r for r in rows if r["source"] == "ap")["vendor_id"] = ""
+        self.assertEqual(self.run_with("cost_transactions", change), {"R15"})
+
+    def test_r17_billed_beyond_contract(self):
+        def change(rows):
+            next(r for r in rows if r["job_id"] == "J-1107")["work_completed"] = "900000.00"
+        self.assertIn("R17", self.run_with("billings", change))
+
+    def test_r18_closed_commitment_with_retainage(self):
+        def change(rows):
+            next(r for r in rows if r["commitment_id"] == "SC-1104-01")["status"] = "closed"
+        self.assertEqual(self.run_with("commitments", change), {"R18"})
+
+    def test_r19_inactive_vendor_with_open_commitment(self):
+        def change(rows):
+            next(r for r in rows if r["vendor_id"] == "V-2006")["status"] = "inactive"
+        self.assertEqual(self.run_with("vendors", change), {"R19"})
+
+    def test_r21_approved_change_on_void_commitment(self):
+        def change(rows):
+            next(r for r in rows if r["commitment_id"] == "SC-1104-02")["status"] = "void"
+        self.assertIn("R21", self.run_with("commitments", change))
+
+    def test_r22_pending_change_on_closed_job(self):
+        def change(rows):
+            next(r for r in rows if r["job_id"] == "J-1107")["status"] = "closed"
+        self.assertIn("R22", self.run_with("jobs", change))
+
+    def test_r23_cost_on_inactive_code(self):
+        def change(rows):
+            next(r for r in rows if r["cost_code"] == "02-010")["active"] = "no"
+        self.assertEqual(self.run_with("cost_codes", change), {"R23"})
+
+
+class Profiles(unittest.TestCase):
+    def test_vendor_list_problems_are_all_found(self):
+        p = profile_file(SAMPLES / "legacy-export" / "vendor-list.csv")
+        self.assertEqual({f.check for f in p.findings}, {"P01", "P04", "P06", "P07", "P10", "P12", "P13", "P14"})
+        self.assertEqual([f.check for f in p.errors], ["P10"])
+        kinds = {c.name: c.kind for c in p.columns}
+        self.assertEqual(kinds["Tax ID"], "sensitive")
+        self.assertEqual(kinds["YTD Paid"], "money")
+
+    def test_job_cost_export_profiles_clean(self):
+        p = profile_file(SAMPLES / "legacy-export" / "job-cost-detail.csv")
+        self.assertEqual({f.check for f in p.findings}, {"P05"})
+        kinds = {c.name: (c.kind, c.detail) for c in p.columns}
+        self.assertEqual(kinds["Phase"][0], "code")
+        self.assertEqual(kinds["Date"], ("date", "month-first"))
+        self.assertTrue(kinds["Amount"][1].startswith("total 1,213,290.57"))
+
+    def test_filtered_credits_are_suspicious(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "x.csv"
+            lines = ["Job,Amount"] + [f'J-1,"${n},000.00"' for n in range(1, 30)]
+            path.write_text("\n".join(lines), encoding="utf-8")
+            self.assertIn("P11", {f.check for f in profile_file(path).findings})
+
+
+class Manifests(unittest.TestCase):
+    def test_copy_verified_and_changes_found(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a, b = Path(tmp) / "a", Path(tmp) / "b"
+            shutil.copytree(SAMPLES / "schedules", a)
+            shutil.copytree(SAMPLES / "schedules", b)
+            self.assertTrue(manifest.compare(manifest.build(a), manifest.build(b)).passed)
+            (b / "fitout.xer").write_text("changed", encoding="utf-8")
+            (b / "fitout.xml").rename(b / "moved.xml")
+            (b / "fitout-lossy-conversion.xml").unlink()
+            d = manifest.compare(manifest.build(a), manifest.build(b))
+            self.assertEqual(d.changed, ["fitout.xer"])
+            self.assertEqual(d.moved, [("fitout.xml", "moved.xml")])
+            self.assertEqual(d.missing, ["fitout-lossy-conversion.xml"])
+            self.assertFalse(d.passed)
+
+    def test_manifest_round_trips_through_csv(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            entries = manifest.build(SAMPLES / "schedules")
+            out = Path(tmp) / "m.csv"
+            manifest.write(entries, out)
+            self.assertEqual([e.sha256 for e in manifest.load(out)], [e.sha256 for e in entries])
+
+
 class Mapping(unittest.TestCase):
     MAPPING = ROOT / "mappings" / "legacy-job-cost-detail.json"
     EXPORT = SAMPLES / "legacy-export" / "job-cost-detail.csv"
@@ -131,7 +250,8 @@ class Mapping(unittest.TestCase):
         result = run_mapping(self.MAPPING, self.EXPORT)
         self.assertEqual(result.errors, [])
         self.assertEqual(result.rows_skipped, 11)
-        clean = [r for r in csv.DictReader((SAMPLES / "clean" / "cost_transactions.csv").open(encoding="utf-8")) if r["job_id"] == "J-1104"]
+        with (SAMPLES / "clean" / "cost_transactions.csv").open(encoding="utf-8") as handle:
+            clean = [r for r in csv.DictReader(handle) if r["job_id"] == "J-1104"]
         self.assertEqual(len(result.rows), len(clean))
         total = sum(Decimal(r["amount"]) for r in clean)
         self.assertEqual(result.money_out["amount"], total)

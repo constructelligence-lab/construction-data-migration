@@ -91,7 +91,7 @@ Plan for **at least two full trial loads** before the final one. Each trial:
 1. exports from the old system as of a recent period end, using the same reports and mappings the final
    load will use;
 2. loads into a test copy of the new system;
-3. is reconciled to the cent against that period's control totals ([chapter 6](06-reconciliation.md));
+3. is reconciled to the cent against that period's control totals ([chapter 7](07-reconciliation.md));
 4. produces an issue log, and each issue is fixed in the **mapping or the source data**, never by hand in
    the loaded data.
 
@@ -137,7 +137,7 @@ source data needs fixing before it can be mapped.
 | 10 | Cutover: close the period, print the control reports, final load, reconcile, sign off |
 | 11-14 | Parallel run for one period, then compare and sign off again |
 
-The day-by-day version is in the [cutover runbook](09-cutover-runbook.md).
+The day-by-day version is in the [cutover runbook](11-cutover-runbook.md).
 
 ---
 

@@ -9,7 +9,7 @@ only change when this script does.
 
 Writes:
   samples/clean/           a migration that ties out to the cent
-  samples/broken/          the same migration with nine classic migration faults planted in it
+  samples/broken/          the same migration with twelve classic migration faults planted in it
   samples/legacy-export/   one job's cost detail as a typical old-system report export
   samples/schedules/       one schedule as P6 XER, as Project XML, and as a lossy conversion
 """
@@ -456,6 +456,14 @@ def break_it(clean) -> dict:
     tx.remove(credit)
     # 9. the same commitment line loaded twice with the same key
     d["commitments"].append(dict(next(c for c in d["commitments"] if c["commitment_id"] == "PO-1107-01")))
+    # 10. an AP invoice keyed to the wrong vendor against the right subcontract
+    next(t for t in tx if t["commitment_id"] == "SC-1104-02")["vendor_id"] = "V-2003"
+    # 11. pay applications renumbered from 3 onwards, leaving a gap the owner will ask about
+    for b in d["billings"]:
+        if b["job_id"] == "J-1107" and b["application_number"] >= 3:
+            b["application_number"] += 1
+    # 12. the same subcontractor set up twice under two vendor numbers
+    d["vendors"].append({"vendor_id": "V-2010", "vendor_name": "SAMPLE DRYWALL CO.", "tin_last4": "4821", "reports_1099": False, "status": "active"})
     return d
 
 
@@ -510,6 +518,33 @@ def legacy_export(clean, job_id: str) -> None:
             for old in olds:
                 note = "merged: old codes 0902.00 and 0902.10 were the same scope" if len(olds) > 1 else ""
                 w.writerow([old, new, note])
+
+
+def vendor_export() -> None:
+    """A vendor list exported the way it should NOT leave an accounting system, for ``cdm profile``.
+
+    Every problem in it is deliberate. The tax IDs all start with 00, which is not a valid prefix, so
+    none of them can be a real number.
+    """
+    rows = [
+        ["Vendor No", "Name", "Tax ID", "Type", "1099", "Last Payment", "YTD Paid"],
+        ["002001", "Sample Drywall Co", "00-0000001", "Sub", "N", "08/07/2026", "184,220.15"],
+        ["002002", "Sample Mechanical Co", "00-0000002", "Sub", "N", "08/12/2026", "221,904.40"],
+        ["2003", "Sample Electric Co", "00-0000003", "Sub", "N", "07/11/2026", "198,310.00"],
+        ["002004", "Sample Flooring Co ", "00-0000004", "Sub", "Y", "06/02/2026", "12,480.00"],
+        ["002005", "Sample Painting Co", "00-0000005", "Sub", "Y", "05/09/2026", "9,875.50"],
+        ["002006", "Sample Millwork Co", "00-0000006", "Sub", "N", "08/03/2026", "26,110.75"],
+        ["002007", "Sample Hardware Supply", "00-0000007", "Supplier", "N", "08/10/2026", "31,642.18"],
+        ["002008", "Sample Testing Labs", "00-0000008", "Service", "Y", "04/06/2026", "12,250.00"],
+        ["002009", "Sample Concrete Co", "00-0000009", "Sub", "N", "07/01/2026", "171,396.00"],
+        ["002010", "SAMPLE DRYWALL CO.", "00-0000010", "Sub", "N", "03/02/2026", "4,100.00"],
+        ["002011", "Sample Démolition Société", "00-0000011", "Sub", "N", "02/10/2026", "2.51E+04"],
+        ["002011", "Sample Démolition Société", "00-0000011", "Sub", "N", "02/10/2026", "2.51E+04"],
+    ]
+    folder = SAMPLES / "legacy-export"
+    folder.mkdir(parents=True, exist_ok=True)
+    with (folder / "vendor-list.csv").open("w", newline="", encoding="cp1252") as handle:
+        csv.writer(handle, lineterminator="\r\n").writerows(rows)
 
 
 # --------------------------------------------------------------------------- schedules
@@ -692,6 +727,7 @@ def main() -> None:
         for record in RECORDS:
             write_rows(SAMPLES / name / f"{record}.csv", record, data[record], schema)
     legacy_export(clean, "J-1104")
+    vendor_export()
     sched = SAMPLES / "schedules"
     sched.mkdir(parents=True, exist_ok=True)
     rows = schedule_rows()

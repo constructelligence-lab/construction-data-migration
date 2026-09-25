@@ -1,0 +1,7 @@
+connection,direction,system_at_other_end,what_it_carries,codes_it_uses,frequency,decision,owner,tested_in_trial,notes
+Bank positive pay file,out,Bank,Cheque numbers and amounts,vendor numbers,each payment run,rebuild,Controller,,
+Payroll import,in,Payroll provider,Hours and cost by job and cost code,"job numbers, cost codes, employee numbers",weekly,rebuild,Controller,,Crosswalk the payroll provider's code tables before cutover
+Field time capture,in,Field app,Crew hours by job and cost code,"job numbers, cost codes",daily,rebuild,Field lead,,
+Estimate to budget,in,Estimating system,Budget lines for new jobs,cost codes,per new job,rebuild,Chief estimator,,
+Lender draw report,out,Lender,Monthly draw package,job numbers,monthly,rebuild,Controller,,Send the lender a sample of the new format before the first draw
+Owner dashboard,out,BI tool,Job profitability and WIP,"job numbers, cost codes",weekly,replace,Controller,,
