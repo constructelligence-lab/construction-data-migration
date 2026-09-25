@@ -33,6 +33,16 @@ number, its revision history or the record of who had the ball loses most of its
 | Lien waivers, insurance certificates, bonds | Current ones in detail, linked to vendors and commitments | Archive | Expiry dates. The new system must know when a certificate lapses |
 | Warranties and O&M manuals | Archive, indexed by job, system and expiry | Archive | Warranty start dates. They are claimed years later |
 
+## A neutral format for the logs
+
+The five logs that carry most of a job's obligations (RFIs, submittals, change events, daily reports and punch lists)
+have open schemas and CSV templates in
+[construction-project-records](https://github.com/constructelligence-lab/construction-project-records). Mapping each
+log into that format on the way out gives you one shape to check, whichever systems you are moving between. Its checker
+finds the faults that damage a log in transit: duplicate and missing numbers, answers with no date, open items with
+nobody holding the ball. Run it on the export from the old system and on the export from the new one, and the metrics
+(open, overdue, by status) should agree.
+
 ## Archives that can be used
 
 An archive is only useful if someone can find a document in it in five years' time without the old system.

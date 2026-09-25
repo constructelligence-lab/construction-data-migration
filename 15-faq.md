@@ -1,5 +1,11 @@
 # Questions we get asked
 
+### Where do I start?
+
+With [the worked example](16-worked-example.md). It runs a whole trial load on the sample data in ten minutes, and shows
+what every check is for. Then read [why migrations fail](01-why-migrations-fail.md) and
+[plan the migration](02-plan-the-migration.md).
+
 ### How long does a migration take?
 
 For a contractor with a few dozen open jobs, twelve to sixteen weeks from inventory to the end of the parallel

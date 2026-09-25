@@ -13,7 +13,7 @@ can help run the process without being trusted to sign it off.
 
 **Updated September 2026 · the guide is about ninety minutes' read · the toolkit needs Python 3.9+ and nothing else.**
 
-![chapters](https://img.shields.io/badge/chapters-15-1f6feb) ![checks](https://img.shields.io/badge/automated%20checks-40-2ea043) ![dependencies](https://img.shields.io/badge/dependencies-none-2ea043) ![agents](https://img.shields.io/badge/AGENTS.md-included-6e7781) ![licence](https://img.shields.io/badge/licence-CC%20BY%204.0%20%2B%20MIT-6e7781)
+![chapters](https://img.shields.io/badge/chapters-16-1f6feb) ![checks](https://img.shields.io/badge/automated%20checks-40-2ea043) ![dependencies](https://img.shields.io/badge/dependencies-none-2ea043) ![agents](https://img.shields.io/badge/AGENTS.md-included-6e7781) ![licence](https://img.shields.io/badge/licence-CC%20BY%204.0%20%2B%20MIT-6e7781)
 
 ---
 
@@ -25,6 +25,7 @@ can help run the process without being trusted to sign it off.
 | Controller / finance | [Financial cutover](06-financial-cutover.md), [Reconciliation](07-reconciliation.md) | "How do I know nothing was lost?" |
 | Project manager | [The records that matter](03-the-records-that-matter.md), [Project records](08-project-records-and-documents.md) | "Will my commitments, change orders and RFIs be right on day one?" |
 | Scheduler | [Schedules](09-schedules.md) | "Did the logic survive the conversion?" |
+| Learning by doing | [A worked example](16-worked-example.md) | "Show me the whole thing once, on real-looking data" |
 | IT / systems / whoever was handed this | [Plan the migration](02-plan-the-migration.md), [Cutover runbook](11-cutover-runbook.md), [Check catalogue](CHECKS.md) | "What do I do, in what order, and how do I know it worked?" |
 | Buying a new system | [Working with vendors and implementers](14-working-with-vendors-and-implementers.md) | "What must be in the contract?" |
 | Anyone holding the exports | [Handling migration data safely](13-handling-migration-data-safely.md) | "What must not leak?" |
@@ -64,9 +65,12 @@ can help run the process without being trusted to sign it off.
 14. **[Working with vendors and implementers](14-working-with-vendors-and-implementers.md)**
     Who does what, the questions to ask before you sign, and what the statement of work must say.
 15. **[Questions we get asked](15-faq.md)**
+16. **[A worked example, end to end](16-worked-example.md)**
+    One trial load on the samples, from profiling the exports to go/no-go, with the real commands and output. Start
+    here if you learn by doing.
 
 **[The check catalogue](CHECKS.md)** lists every check in the guide, automated and manual, with who owns it and
-when it runs.
+when it runs. **[The glossary](GLOSSARY.md)** defines the migration terms the guide uses.
 
 ## Templates you can use today
 
@@ -82,6 +86,7 @@ when it runs.
 | [Parallel run log](templates/parallel-run-log.csv) | Job-by-job comparison for the period after cutover |
 | [Vendor and implementer questions](templates/vendor-and-implementer-questions.md) | What to ask, and get in writing, before you sign |
 | [Cutover checklist](templates/cutover-checklist.md) | The printable, signable version of the runbook |
+| [Go / no-go](templates/go-no-go.md) | The decision to open the new system: what must be yes, what can be accepted with an owner |
 | [Reconciliation sign-off](templates/reconciliation-sign-off.md) | The three-signature sign-off, for when you reconcile by other means |
 
 ## The toolkit
@@ -191,6 +196,10 @@ vendor documentation or anyone's personal data. We will remove it.
   starter cost code taxonomy mapped to CSI divisions.
 - [`ai-in-construction`](https://github.com/constructelligence-lab/ai-in-construction): a practical guide to AI in
   construction. Chapter 3 explains why clean, coded, current data comes first.
+- [`construction-project-records`](https://github.com/constructelligence-lab/construction-project-records): open
+  schemas, templates and a checker for RFIs, submittals, change events, daily reports and punch lists.
+- [`construction-mcp`](https://github.com/constructelligence-lab/construction-mcp): offline construction reference data
+  and calculators for AI assistants.
 - [`open-source-construction-tools`](https://github.com/constructelligence-lab/open-source-construction-tools):
   verified open source software for construction, including schedule and document tools.
 

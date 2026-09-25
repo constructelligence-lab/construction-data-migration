@@ -37,7 +37,9 @@ CHAPTERS = [
     "13-handling-migration-data-safely.md",
     "14-working-with-vendors-and-implementers.md",
     "15-faq.md",
+    "16-worked-example.md",
     "CHECKS.md",
+    "GLOSSARY.md",
     "AGENTS.md",
 ]
 TEMPLATES = [
@@ -51,6 +53,7 @@ TEMPLATES = [
     "templates/parallel-run-log.csv",
     "templates/vendor-and-implementer-questions.md",
     "templates/cutover-checklist.md",
+    "templates/go-no-go.md",
     "templates/reconciliation-sign-off.md",
 ]
 SITE = "https://constructelligence.co"

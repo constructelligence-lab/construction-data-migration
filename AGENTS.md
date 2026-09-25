@@ -35,6 +35,9 @@ python3 -m cdm manifest-compare BEFORE AFTER               # prove an archive ar
 
 Every command exits non-zero when it finds errors. Use the exit code; do not read "looks fine" into partial output.
 
+**New to the toolkit?** Walk through [chapter 16](16-worked-example.md) on the samples first. It runs every command in
+order on synthetic data and shows what each finding means, so you learn the tools without touching real data.
+
 ## Your role
 
 You are an assistant to a **named person who owns the migration** (the migration data owner), working alongside the

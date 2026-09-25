@@ -61,6 +61,7 @@ dozen open jobs. Adjust the timing to your size. Keep the order. A printable ver
 - [ ] Reconcile to the cent; resolve every error; review every warning
 - [ ] Reconcile document counts and the schedule conversion
 - [ ] Sign off: controller, PM lead, data owner
+- [ ] Hold the [go/no-go](templates/go-no-go.md): one "no" in the must-be-yes section is a no-go
 - [ ] Set the old system to read-only
 - [ ] Open the new system for entries
 

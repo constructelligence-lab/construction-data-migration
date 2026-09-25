@@ -134,6 +134,7 @@ The full list is in [chapter 4](04-source-data-quality.md#the-clean-up-list).
 | Integrations switched to the new system and new codes | Data owner | C |
 | Vendor tax IDs and bank details entered in the new system through its own secure process and verified | Controller | C |
 | Old system set to read-only | IT | C |
+| Go/no-go held and signed; every must-be-yes line is yes ([template](templates/go-no-go.md)) | Controller, PM lead, data owner | C |
 | Owners, lenders and subcontractors told about anything they will see change | PM lead, Controller | C |
 
 ### After go-live

@@ -54,6 +54,7 @@ attached to issue logs. The reconciliation refuses a file that carries more than
 | Certified payroll and prevailing wage records | Archive, kept retrievable | They are compliance records that must be produced on request, not operational data |
 | Equipment rates and usage | The new system's equipment module, if it has one | The structure varies too much between systems to model neutrally |
 | Lien waivers, insurance certificates, bonds | Document migration ([chapter 8](08-project-records-and-documents.md)) | They are documents with dates and signatures, not ledger records |
+| RFIs, submittals, change events, daily reports, punch lists | Their own logs; open schemas and a checker are in [construction-project-records](https://github.com/constructelligence-lab/construction-project-records) | They are project records with numbers and histories, not ledger records ([chapter 8](08-project-records-and-documents.md)) |
 | Estimates and bid history | The estimating system, or the archive | Estimates are not obligations. Keep them where estimators can compare them |
 | General ledger | Your accountant's conversion plan | The job cost subledger must tie to the GL ([chapter 6](06-financial-cutover.md#tie-the-job-cost-ledger-to-the-general-ledger)), but the GL conversion itself is accounting work |
 
