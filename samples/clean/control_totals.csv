@@ -1,0 +1,22 @@
+job_id,metric,value,source_report,as_of
+J-1104,contract_value,2545150.00,Contract status report,2026-08-31
+J-1104,revised_budget,2208150.00,Job cost summary,2026-08-31
+J-1104,committed_cost,1778350.00,Commitment register,2026-08-31
+J-1104,cost_to_date,1213290.57,Job cost summary,2026-08-31
+J-1104,billed_to_date,1398458.66,Billing history report,2026-08-31
+J-1104,retainage_receivable,139845.86,Retainage receivable report,2026-08-31
+J-1104,retainage_payable,88151.31,Retainage payable report,2026-08-31
+J-1107,contract_value,976600.00,Contract status report,2026-08-31
+J-1107,revised_budget,840450.00,Job cost summary,2026-08-31
+J-1107,committed_cost,632380.00,Commitment register,2026-08-31
+J-1107,cost_to_date,477171.62,Job cost summary,2026-08-31
+J-1107,billed_to_date,554471.78,Billing history report,2026-08-31
+J-1107,retainage_receivable,27723.60,Retainage receivable report,2026-08-31
+J-1107,retainage_payable,15008.14,Retainage payable report,2026-08-31
+J-1098,contract_value,508450.00,Contract status report,2026-08-31
+J-1098,revised_budget,464820.00,Job cost summary,2026-08-31
+J-1098,committed_cost,287350.00,Commitment register,2026-08-31
+J-1098,cost_to_date,436005.87,Job cost summary,2026-08-31
+J-1098,billed_to_date,508450.00,Billing history report,2026-08-31
+J-1098,retainage_receivable,25422.49,Retainage receivable report,2026-08-31
+J-1098,retainage_payable,0.00,Retainage payable report,2026-08-31

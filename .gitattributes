@@ -1,0 +1,6 @@
+# Normalise line endings so diffs stay clean across Windows and macOS.
+* text=auto eol=lf
+*.svg text eol=lf
+# Sample exports keep Windows line endings on purpose: real report exports usually have them.
+samples/legacy-export/*.csv -text
+*.xer -text

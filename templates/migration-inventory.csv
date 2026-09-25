@@ -1,0 +1,7 @@
+system,used_for,owner,records_held,open_jobs_affected,volume_estimate,export_route,export_format,known_problems,notes
+Accounting system,"Job cost, AP, AR, GL",Controller,"jobs, budgets, commitments, cost, billing, vendors",all,,Standard reports and CSV export,CSV,,
+Project management platform,"RFIs, submittals, drawings, change events",PM lead,"documents, change events",all,,Documented API or bulk export,CSV and files,,
+Scheduling tool,CPM schedules,Scheduler,schedules,all,,Native export,XER or Project XML,,
+Payroll provider,Payroll,Controller,"employees, wages, certified payroll",all,,Payroll provider's own conversion,,,Handled by the payroll provider with the accountant
+Change order log,Pending and approved change orders,PM lead,change orders,,,Copy of the spreadsheet,XLSX,,Often the only record of pending change orders
+Retainage tracker,Retainage in both directions,Controller,retainage,,,Copy of the spreadsheet,XLSX,,

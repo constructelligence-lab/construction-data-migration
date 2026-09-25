@@ -1,0 +1,18 @@
+name: Correction or improvement
+description: Something in the guide or the toolkit is wrong, missing or unclear
+labels: ["correction"]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Chapter, template or file
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong or missing, and how do you know?
+      description: A migration you ran, a document you can cite, or a test case. Synthetic examples only.
+    validations:
+      required: true

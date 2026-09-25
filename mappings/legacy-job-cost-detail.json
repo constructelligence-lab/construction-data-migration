@@ -1,0 +1,19 @@
+{
+  "record": "cost_transactions",
+  "description": "Job cost detail report exported from the sample legacy system, one job per file. Subtotal and total lines are skipped; old phase codes go through the crosswalk; categories and sources are mapped letter by letter. Dates in this export are month-first.",
+  "skip_if": [
+    {"column": "Job", "matches": "|Total.*"}
+  ],
+  "fields": {
+    "transaction_id": {"template": "{Batch}-{Line}"},
+    "job_id": {"from": "Job"},
+    "cost_code": {"from": "Phase", "crosswalk": "../samples/legacy-export/cost-code-crosswalk.csv"},
+    "cost_type": {"from": "Cat", "upper": true, "map": {"L": "labor", "M": "material", "S": "subcontract", "E": "equipment", "O": "other"}},
+    "posted_date": {"from": "Date", "date_format": "%m/%d/%Y"},
+    "amount": {"from": "Amount"},
+    "source": {"from": "Src", "map": {"AP": "ap", "PR": "payroll", "JE": "journal", "EQ": "equipment", "OB": "opening_balance"}},
+    "commitment_id": {"from": "Commitment"},
+    "vendor_id": {"from": "Vendor"},
+    "retainage_withheld": {"from": "Ret"}
+  }
+}

@@ -1,0 +1,65 @@
+name: Migration help
+description: Planning, stuck in, or cleaning up after a construction data migration? Ask here.
+title: "[Migration help] "
+labels: ["migration-help"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Issues are public.** Describe the *shape* of your data, never the data itself: column headers, record
+        counts, the error message, a made-up example row. Do not post real names, amounts, tax IDs, bank details,
+        client names, job details or any vendor's customer-only documentation.
+
+        Prefer to talk privately? Say so below and we will follow up, or see [constructelligence.co](https://constructelligence.co).
+  - type: input
+    id: from
+    attributes:
+      label: Moving from
+      description: The system or spreadsheets you are leaving
+      placeholder: e.g. an on-premise accounting system plus spreadsheets
+    validations:
+      required: true
+  - type: input
+    id: to
+    attributes:
+      label: Moving to
+      placeholder: e.g. a cloud ERP and a project management platform
+    validations:
+      required: true
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Where are you?
+      options:
+        - Planning, before any export
+        - Mapping and trial loads
+        - Cutover week
+        - After cutover, something does not tie out
+        - Something else
+    validations:
+      required: true
+  - type: checkboxes
+    id: areas
+    attributes:
+      label: What is involved?
+      options:
+        - label: Job cost, budgets and commitments
+        - label: Owner billing and retainage
+        - label: Change orders
+        - label: RFIs, submittals and documents
+        - label: Schedules (P6, Microsoft Project)
+        - label: Payroll or tax reporting
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is going wrong, or what do you need to decide?
+      description: Column headers, counts and made-up example rows help. Real data does not belong here.
+    validations:
+      required: true
+  - type: dropdown
+    id: contact
+    attributes:
+      label: Would you like us to follow up privately?
+      options:
+        - "No, answering here is fine"
+        - "Yes, please get in touch"

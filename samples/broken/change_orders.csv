@@ -1,0 +1,13 @@
+change_order_id,job_id,level,commitment_id,cost_code,cost_type,status,amount,description
+OCO-1104-001,J-1104,owner,,23-010,subcontract,approved,46250.00,Added exam room exhaust
+OCO-1104-002,J-1104,owner,,09-020,subcontract,approved,18900.00,Lead-lined partitions at imaging
+OCO-1104-003,J-1104,owner,,26-020,subcontract,pending,27400.00,Owner-requested nurse call rough-in
+OCO-1104-004,J-1104,owner,,06-050,subcontract,rejected,15200.00,Upgraded reception counter
+CCO-1104-001,J-1104,commitment,SC-1104-02,23-010,subcontract,approved,41800.00,Exam room exhaust
+CCO-1104-002,J-1104,commitment,SC-1104-01,09-020,subcontract,approved,16450.00,Lead-lined partitions
+CCO-1104-003,J-1104,commitment,SC-1104-03,26-020,subcontract,pending,24100.00,Nurse call rough-in
+OCO-1107-001,J-1107,owner,,03-100,subcontract,approved,-8400.00,Deduct: slab thickness revised
+OCO-1107-002,J-1107,owner,,22-010,subcontract,approved,12650.00,Grease interceptor relocation
+CCO-1107-001,J-1107,commitment,SC-1104-01,03-100,subcontract,approved,-7650.00,Slab thickness revised
+OCO-1098-001,J-1098,owner,,09-060,subcontract,approved,9850.00,Carpet upgrade in boardroom
+CCO-1098-001,J-1098,commitment,SC-1098-03,09-060,subcontract,approved,8420.00,Carpet upgrade

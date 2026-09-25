@@ -1,0 +1,6 @@
+target_record,target_field,source_system,source_report_or_table,source_column,transform,example_source_value,example_target_value,owner,verified_by
+cost_transactions,transaction_id,Accounting system,Job cost detail report,Batch + Line,"template {Batch}-{Line}",B2608 / 041,B2608-041,Data owner,
+cost_transactions,cost_code,Accounting system,Job cost detail report,Phase,crosswalk,0902.10,09-020,Data owner,
+cost_transactions,cost_type,Accounting system,Job cost detail report,Cat,"map L=labor M=material S=subcontract E=equipment O=other",S,subcontract,Data owner,
+cost_transactions,posted_date,Accounting system,Job cost detail report,Date,date format %m/%d/%Y,03/04/2026,2026-03-04,Data owner,
+cost_transactions,amount,Accounting system,Job cost detail report,Amount,"money; parentheses are negative",(412.50),-412.50,Data owner,

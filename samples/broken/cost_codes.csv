@@ -1,0 +1,18 @@
+cost_code,description,csi_division,active
+01-060,Project supervision,01,yes
+01-070,Project management,01,yes
+01-100,Testing and inspection,01,yes
+02-010,Selective demolition,02,yes
+03-100,Concrete slab on grade,03,yes
+05-040,Miscellaneous metals,05,yes
+06-010,Rough carpentry,06,no
+06-050,Architectural millwork,06,yes
+07-070,Firestopping,07,yes
+08-040,Door hardware sets,08,yes
+09-010,Metal stud framing,09,yes
+09-020,Gypsum board hanging,09,yes
+09-060,Resilient flooring,09,yes
+09-090,Painting interior,09,yes
+22-010,Sanitary drainage,22,yes
+23-010,Ductwork,23,yes
+26-020,Panelboards,26,yes

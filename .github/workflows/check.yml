@@ -1,0 +1,24 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Links, chapters, samples and tests
+        run: python3 scripts/check_repo.py
+      - name: Clean sample reconciles
+        run: python3 -m cdm reconcile samples/clean
+      - name: Broken sample is refused
+        run: "! python3 -m cdm reconcile samples/broken"

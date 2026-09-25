@@ -1,0 +1,62 @@
+record,field,type,required,key,allowed,description
+jobs,job_id,text,yes,yes,,Job number as it will exist in the new system. Never reuse a number that was used for a different job in the old one
+jobs,job_name,text,yes,no,,Job name as the team knows it
+jobs,status,enum,yes,no,open|closed|warranty,Open jobs are migrated in detail; closed jobs normally go to the archive instead
+jobs,customer,text,no,no,,Owner or customer name
+jobs,contract_type,enum,no,no,lump_sum|gmp|cost_plus|unit_price|time_and_materials,Drives how billing and fee are reconciled
+jobs,original_contract,money,yes,no,,Contract value at award before any change orders
+jobs,retainage_pct,decimal,no,no,,Default retainage percentage held by the owner on this job
+jobs,start_date,date,no,no,,Contract start date
+cost_codes,cost_code,text,yes,yes,,Cost code in the new system's numbering
+cost_codes,description,text,yes,no,,Cost code title
+cost_codes,csi_division,text,no,no,,Two-digit CSI division the code rolls up to
+cost_codes,active,bool,no,no,,Inactive codes may still carry history but take no new postings
+budgets,job_id,text,yes,yes,,Job the budget line belongs to
+budgets,cost_code,text,yes,yes,,Cost code of the budget line
+budgets,cost_type,enum,yes,yes,labor|material|subcontract|equipment|other,Cost type of the budget line
+budgets,original_budget,money,yes,no,,Budget at award
+budgets,approved_changes,money,yes,no,,Sum of approved budget changes to date. Keep original and changes separate so the history of the number survives
+vendors,vendor_id,text,yes,yes,,Vendor or subcontractor number in the new system
+vendors,vendor_name,text,yes,no,,Legal name as it appears on the W-9 or equivalent
+vendors,tin_last4,text,no,no,,Last four digits of the tax ID only. Full tax IDs never belong in a migration file
+vendors,reports_1099,bool,no,no,,Whether payments to this vendor are reported on a 1099 or local equivalent
+vendors,status,enum,no,no,active|inactive,Inactive vendors carry history but take no new commitments
+commitments,commitment_id,text,yes,yes,,Subcontract or purchase order number
+commitments,job_id,text,yes,no,,Job the commitment is on
+commitments,vendor_id,text,yes,no,,Vendor or subcontractor holding the commitment
+commitments,commitment_type,enum,yes,no,subcontract|purchase_order,Subcontract or purchase order
+commitments,description,text,no,no,,Scope of the commitment
+commitments,original_value,money,yes,no,,Value at execution before change orders
+commitments,retainage_pct,decimal,no,no,,Retainage percentage withheld from this vendor
+commitments,status,enum,yes,no,open|closed|void,Void commitments are excluded from committed cost
+change_orders,change_order_id,text,yes,yes,,Change order number. Owner and commitment change orders share one sequence here; prefix them if the old system did not
+change_orders,job_id,text,yes,no,,Job the change order is on
+change_orders,level,enum,yes,no,owner|commitment,Owner change orders move the contract; commitment change orders move a subcontract or PO
+change_orders,commitment_id,text,no,no,,Required when level is commitment
+change_orders,cost_code,text,no,no,,Cost code the change is budgeted to
+change_orders,cost_type,enum,no,no,labor|material|subcontract|equipment|other,Cost type the change is budgeted to
+change_orders,status,enum,yes,no,approved|pending|rejected|void,Only approved change orders count toward contract value and committed cost
+change_orders,amount,money,yes,no,,Value of the change. Negative for a deduct
+change_orders,description,text,no,no,,What changed
+cost_transactions,transaction_id,text,yes,yes,,Unique line identifier. Carry the old system's reference so any line can be traced back
+cost_transactions,job_id,text,yes,no,,Job the cost is posted to
+cost_transactions,cost_code,text,yes,no,,Cost code the cost is posted to
+cost_transactions,cost_type,enum,yes,no,labor|material|subcontract|equipment|other,Cost type the cost is posted to
+cost_transactions,posted_date,date,yes,no,,Accounting date. Must be on or before the cutover date
+cost_transactions,amount,money,yes,no,,Cost amount. Negative for credits
+cost_transactions,source,enum,yes,no,ap|payroll|journal|equipment|opening_balance,Where the cost came from; opening_balance is a summarised line brought forward at cutover
+cost_transactions,commitment_id,text,no,no,,Commitment the cost was invoiced against
+cost_transactions,vendor_id,text,no,no,,Vendor the cost was invoiced by
+cost_transactions,retainage_withheld,money,no,no,,Retainage withheld from the vendor on this line. A release to the vendor is a negative amount
+billings,job_id,text,yes,yes,,Job being billed
+billings,application_number,int,yes,yes,,Pay application number on that job
+billings,period_end,date,yes,no,,Period the application covers
+billings,work_completed,money,yes,no,,Work completed and stored materials billed in this period
+billings,retainage_held,money,yes,no,,Retainage held by the owner on this application
+billings,retainage_released,money,yes,no,,Retainage released by the owner on this application
+billings,status,enum,yes,no,approved|submitted|draft,Draft applications are not billed and are excluded from billed to date
+control_totals,job_id,text,yes,yes,,Job the control total is for
+control_totals,metric,enum,yes,yes,contract_value|revised_budget|committed_cost|cost_to_date|billed_to_date|retainage_receivable|retainage_payable,The figure being tied out
+control_totals,value,money,yes,no,,The figure as printed by the old system's own report at cutover
+control_totals,source_report,text,yes,no,,The report the figure came from. File the printed report with the sign-off
+control_totals,as_of,date,yes,no,,Cutover date. Every row must carry the same date

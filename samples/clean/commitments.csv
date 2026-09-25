@@ -1,0 +1,19 @@
+commitment_id,job_id,vendor_id,commitment_type,description,original_value,retainage_pct,status
+SC-1104-01,J-1104,V-2001,subcontract,"Framing, board and finishing",412000.00,10,open
+SC-1104-02,J-1104,V-2002,subcontract,HVAC and ductwork,538500.00,10,open
+SC-1104-03,J-1104,V-2003,subcontract,Electrical,467250.00,10,open
+SC-1104-04,J-1104,V-2004,subcontract,Resilient flooring,96400.00,10,open
+SC-1104-05,J-1104,V-2006,subcontract,Casework and millwork,142800.00,10,open
+PO-1104-01,J-1104,V-2007,purchase_order,Door hardware sets,38650.00,0,open
+SC-1104-06,J-1104,V-2008,subcontract,Special inspections,24500.00,0,open
+SC-1107-01,J-1107,V-2009,subcontract,Slab on grade and topping,186300.00,5,open
+SC-1107-02,J-1107,V-2002,subcontract,Underground sanitary,74200.00,5,open
+SC-1107-03,J-1107,V-2003,subcontract,Service and panels,221900.00,5,open
+SC-1107-04,J-1107,V-2001,subcontract,Demising walls,98750.00,5,open
+PO-1107-01,J-1107,V-2007,purchase_order,Misc metals: lintels and bollards,31480.00,0,open
+SC-1107-05,J-1107,V-2005,subcontract,Painting,27400.00,5,open
+SC-1098-01,J-1098,V-2001,subcontract,Partitions and ceilings,88600.00,10,closed
+SC-1098-02,J-1098,V-2005,subcontract,Painting,41250.00,10,closed
+SC-1098-03,J-1098,V-2004,subcontract,Carpet and resilient,63900.00,10,closed
+SC-1098-04,J-1098,V-2003,subcontract,Lighting and power,72400.00,10,closed
+PO-1098-01,J-1098,V-2007,purchase_order,Door hardware,12780.00,0,closed

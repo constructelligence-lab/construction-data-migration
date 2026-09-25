@@ -1,0 +1,4 @@
+job_id,job_name,status,customer,contract_type,original_contract,retainage_pct,start_date
+J-1104,Riverside Clinic Fit-out,open,Sample Health Partners,lump_sum,2480000.00,10,2026-02-02
+J-1107,Harbor Street Retail Shell,open,Sample Retail Holdings,gmp,985000.00,5,2026-04-06
+J-1098,Oak Avenue Office Refresh,warranty,Sample Office Trust,lump_sum,498600.00,10,2025-09-08

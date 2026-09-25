@@ -1,0 +1,10 @@
+vendor_id,vendor_name,tin_last4,reports_1099,status
+V-2001,Sample Drywall Co,4821,no,active
+V-2002,Sample Mechanical Co,1937,no,active
+V-2003,Sample Electric Co,6604,no,active
+V-2004,Sample Flooring Co,2210,yes,active
+V-2005,Sample Painting Co,00-0000000,yes,active
+V-2006,Sample Millwork Co,5072,no,active
+V-2007,Sample Hardware Supply,3318,no,active
+V-2008,Sample Testing Labs,7461,yes,active
+V-2009,Sample Concrete Co,9025,no,active
