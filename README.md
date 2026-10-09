@@ -144,6 +144,11 @@ WARNING P14 [Name] 1 group(s), e.g. 'SAMPLE DRYWALL CO.' / 'Sample Drywall Co': 
 
 Run the checks the way CI does: `python3 scripts/check_repo.py`.
 
+The clean tables in `schema/fields.csv` also convert straight into the
+[construction schema](https://github.com/constructelligence-lab/construction-schema), which links the ledger to the
+project records (RFIs, change events, submittals) behind it:
+`python3 -m cschema convert construction-data-migration path/to/clean -o ledger.jsonl`.
+
 ## Using an AI agent
 
 AI coding agents are good at the legwork of a migration: profiling exports, drafting crosswalks and mappings,
@@ -199,6 +204,7 @@ Open construction resources from the same team, all maintained alongside this on
 | --- | --- |
 | [AI in construction](https://github.com/constructelligence-lab/ai-in-construction) | A practical guide to AI in construction: what works today, what the data has to look like, the risks, and a 90-day plan. |
 | [Construction project records](https://github.com/constructelligence-lab/construction-project-records) | Open schemas, templates and a checker for RFIs, submittals, change events, daily reports and punch lists. |
+| [Construction schema](https://github.com/constructelligence-lab/construction-schema) | One record format for construction project data, with provenance, classifications and links, built for AI. |
 | [Construction reference data](https://github.com/constructelligence-lab/construction-data) | Cost codes, units, waste factors, pay units, trade sequence, glossary and metric formulas in CSV. |
 | [Construction reference MCP server](https://github.com/constructelligence-lab/construction-mcp) | An offline MCP server that gives AI assistants construction reference data and calculators. |
 | [Construction prompts](https://github.com/constructelligence-lab/construction-prompts) | 28 prompts for ChatGPT, Claude and Gemini, from bid go/no-go to notice letters. |
