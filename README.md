@@ -72,6 +72,13 @@ can help run the process without being trusted to sign it off.
 **[The check catalogue](CHECKS.md)** lists every check in the guide, automated and manual, with who owns it and
 when it runs. **[The glossary](GLOSSARY.md)** defines the migration terms the guide uses.
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/cutover-timeline-dark.svg">
+    <img src="assets/cutover-timeline-light.svg" alt="A cutover timeline: decide, map, two trial loads with training, prepare, cutover week, a five-week parallel run, then close out, in weeks before and after go-live" width="100%">
+  </picture>
+</p>
+
 ## Templates you can use today
 
 | Template | Use it for |
@@ -90,6 +97,13 @@ when it runs. **[The glossary](GLOSSARY.md)** defines the migration terms the gu
 | [Reconciliation sign-off](templates/reconciliation-sign-off.md) | The three-signature sign-off, for when you reconcile by other means |
 
 ## The toolkit
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/toolkit-dark.svg">
+    <img src="assets/toolkit-light.svg" alt="The cdm toolkit: profile the export, map it, validate the records, reconcile to the cent; plus schedule and document commands" width="100%">
+  </picture>
+</p>
 
 Standard-library Python, no install step, no network access. Clone the repository and run it from the root.
 
