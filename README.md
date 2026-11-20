@@ -235,6 +235,11 @@ Guide, templates, schema and sample data: **CC BY 4.0**. Code in `cdm/`, `script
 [`LICENSE`](LICENSE). Product names are trademarks of their owners, used only to identify formats and systems;
 no affiliation or endorsement is implied.
 
+## Related on constructelligence.co
+
+- [construction data migration guide](https://constructelligence.co/guides/construction-data-migration/)
+- [open models, datasets and tools](https://constructelligence.co/open-source/)
+
 ---
 
 *Maintained by [Constructelligence](https://constructelligence.co) — building the AI infrastructure for
